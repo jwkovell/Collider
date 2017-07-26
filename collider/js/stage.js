@@ -32,84 +32,92 @@ Stage.prototype = {
       x: 220,
       y: 40,
       radius: 15,
+      density: .5,
     }));
 
     this.circles.push(new Circle({
       x: 250,
       y: 40,
       radius: 15,
+      density: .5,
     }));
 
     this.circles.push(new Circle({
       x: 280,
       y: 40,
       radius: 15,
+      density: .5,
     }));
 
     this.circles.push(new Circle({
       x: 235,
       y: 70,
       radius: 15,
+      density: .5,
     }));
 
     this.circles.push(new Circle({
       x: 265,
       y: 70,
       radius: 15,
+      density: .5,
     }));
 
     this.circles.push(new Circle({
       x: 250,
       y: 100,
       radius: 15,
+      density: .5,
     }));
 
     this.pins.push(new Pin({
       x: 50,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     this.pins.push(new Pin({
       x: 100,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     this.pins.push(new Pin({
       x: 150,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     this.pins.push(new Pin({
       x: 200,
       y: 500,
-      radius: 10,
+      radius: 15,
+      bounce: 2
     }));
 
     this.pins.push(new Pin({
       x: 300,
       y: 500,
-      radius: 10,
+      radius: 15,
+      bounce: 2
     }));
 
     this.pins.push(new Pin({
       x: 350,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     this.pins.push(new Pin({
       x: 400,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     this.pins.push(new Pin({
       x: 450,
       y: 500,
-      radius: 10,
+      radius: 10
     }));
 
     // Instantiate Loop.
@@ -161,9 +169,6 @@ Stage.prototype = {
     // Clear canvas.
     this.stage.clearRect(0, 0, this.width, this.height);
 
-    // Draw dock.
-    this.dock.draw();
-
     // Loop through circles.
     this.circles.forEach(function(circle){
 
@@ -179,6 +184,9 @@ Stage.prototype = {
       pin.draw();
 
     });
+
+    // Draw dock.
+    this.dock.draw();
 
   },
 

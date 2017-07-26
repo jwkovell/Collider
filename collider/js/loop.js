@@ -1,6 +1,6 @@
 function Loop() {
 
-  this.maxFPS = 30;
+  this.maxFPS = 60;
   this.lastFrame = 0;
   this.timePassed = 1;
 

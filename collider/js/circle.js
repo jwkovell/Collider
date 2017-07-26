@@ -9,12 +9,12 @@ function Circle(options = {}) {
   this.direction = options['direction'] || 0;
   this.speed = options['speed'] || 0;
   this.density = options['density'] || 1;
-  this.maxSpeed = options['maxSpeed'] || 25;
+  this.maxSpeed = options['maxSpeed'] || 20;
   this.minSpeedThreshold = options['minSpeedThreshold'] || .05;
 
-  this.friction = .025;
-  this.bounce = 0;
-  this.pinned = false;
+  this.friction = options['friction'] || .025;
+  this.bounce = options['bounce'] || 1;
+  this.pinned = options['pinned'] || false;
 
   this.prepare();
 
@@ -76,7 +76,7 @@ Circle.prototype = {
     stage.pins.forEach(function(pin){
 
       // If collision is found...
-      if (self.checkCollision(pin)) {
+      if (self.checkCircleCollision(pin)) {
 
         // Handle collision.
         self.handleCircleCollision(pin);
@@ -89,7 +89,7 @@ Circle.prototype = {
     stage.circles.forEach(function(circle){
 
       // If collision is found...
-      if (self.checkCollision(circle)) {
+      if (self.checkCircleCollision(circle)) {
 
         // Handle collision.
         self.handleCircleCollision(circle);
@@ -100,7 +100,7 @@ Circle.prototype = {
 
   },
 
-  checkCollision: function(object) {
+  checkCircleCollision: function(object) {
 
     // If this circle is not the given object...
     if (!(this === object)) {
@@ -156,16 +156,16 @@ Circle.prototype = {
 
         // Set collision ratios based on ratio to total collision mass.
         collisionMass = this.radius * this.density + object.radius * object.density;
-        collisionRatio1 = 2 * object.radius * object.density / collisionMass;
-        collisionRatio2 = 2 * this.radius * this.density / collisionMass;
+        collisionRatio1 = 2 * object.radius * object.density * object.bounce / collisionMass;
+        collisionRatio2 = 2 * this.radius * this.density * this.bounce / collisionMass;
 
       }
 
       this.direction = Math.atan2(collisionY * collisionRatio1, collisionX * collisionRatio1);
       object.direction = Math.atan2(collisionY * collisionRatio2, collisionX * collisionRatio2) + Math.PI;
 
-      this.speed = Math.sqrt( Math.pow(collisionX * collisionRatio1, 2) + Math.pow(collisionY * collisionRatio1, 2));
-      object.speed = Math.sqrt( Math.pow(collisionX * collisionRatio2, 2) + Math.pow(collisionY * collisionRatio2, 2));
+      this.speed = Math.sqrt( Math.pow(collisionX * collisionRatio1, 2) + Math.pow(collisionY * collisionRatio1, 2)) * this.bounce * object.bounce;
+      object.speed = Math.sqrt( Math.pow(collisionX * collisionRatio2, 2) + Math.pow(collisionY * collisionRatio2, 2)) * this.bounce * object.bounce;
 
     }
 
@@ -208,13 +208,23 @@ Circle.prototype = {
     // Position.
     stage.stage.translate(this.x, this.y);
 
+    stage.stage.fillStyle = "rgba(255, 255, 255, 1)";
+    stage.stage.strokeStyle = "rgba(0, 0, 0, .25)";
+
     // Draw.
     stage.stage.beginPath();
     stage.stage.arc(0, 0, this.radius, 0, 2 * Math.PI);
-    stage.stage.strokeStyle = "rgba(0, 0, 0, .1)";
+    stage.stage.fill();
     stage.stage.stroke();
     stage.stage.closePath();
 
+    stage.stage.fillStyle = "rgba(0, 0, 0, .25)";
+
+    // Draw.
+    stage.stage.beginPath();
+    stage.stage.arc(0, 0, this.radius * this.density / 3, 0, 2 * Math.PI);
+    stage.stage.fill();
+    stage.stage.closePath();
 
   },
 

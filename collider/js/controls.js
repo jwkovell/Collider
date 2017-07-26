@@ -67,18 +67,6 @@ Controls.prototype = {
 
   },
 
-  draw: function() {
-
-    stage.resetStage();
-
-    // Draw.
-    stage.stage.beginPath();
-    stage.stage.moveTo(this.pointStartX, this.pointStartY);
-    stage.stage.lineTo(this.pointEndX, this.pointEndY);
-    stage.stage.strokeStyle = "rgba(0, 0, 0, 1)";
-    stage.stage.stroke();
-    stage.stage.closePath();
-
-  },
+  draw: function() {},
 
 }
