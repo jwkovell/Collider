@@ -10,11 +10,15 @@ function Circle(options = {}) {
   this.speed = options['speed'] || 0;
   this.density = options['density'] || 1;
   this.maxSpeed = options['maxSpeed'] || 20;
-  this.minSpeedThreshold = options['minSpeedThreshold'] || .05;
+  this.minSpeedThreshold = options['minSpeedThreshold'] || .01;
 
-  this.friction = options['friction'] || .025;
+  this.hitPoints = options['hitPoints'] || Infinity;
+
+  this.friction = options['friction'] || .01;
   this.bounce = options['bounce'] || 1;
   this.pinned = options['pinned'] || false;
+
+  this.collisionBehaviors = options['collisionBehaviors'] || ['move'];
 
   this.prepare();
 
@@ -76,10 +80,10 @@ Circle.prototype = {
     stage.pins.forEach(function(pin){
 
       // If collision is found...
-      if (self.checkCircleCollision(pin)) {
+      if (self.checkCollision(pin)) {
 
         // Handle collision.
-        self.handleCircleCollision(pin);
+        self.evaluateCollision(pin);
 
       }
 
@@ -89,10 +93,10 @@ Circle.prototype = {
     stage.circles.forEach(function(circle){
 
       // If collision is found...
-      if (self.checkCircleCollision(circle)) {
+      if (self.checkCollision(circle)) {
 
         // Handle collision.
-        self.handleCircleCollision(circle);
+        self.evaluateCollision(circle);
 
       }
 
@@ -100,7 +104,7 @@ Circle.prototype = {
 
   },
 
-  checkCircleCollision: function(object) {
+  checkCollision: function(object) {
 
     // If this circle is not the given object...
     if (!(this === object)) {
@@ -124,7 +128,7 @@ Circle.prototype = {
 
   },
 
-  handleCircleCollision: function(object) {
+  evaluateCollision: function(object) {
 
     // See: https://scratch.mit.edu/projects/116144988/
 
@@ -147,6 +151,8 @@ Circle.prototype = {
       var collisionX = distanceX * collisionScale;
       var collisionY = distanceY * collisionScale;
 
+      var collisionBounce = this.bounce * object.bounce;
+
       var collisionMass = this.radius * this.density;
       var collisionRatio1 = 1;
       var collisionRatio2 = 0;
@@ -161,13 +167,59 @@ Circle.prototype = {
 
       }
 
-      this.direction = Math.atan2(collisionY * collisionRatio1, collisionX * collisionRatio1);
-      object.direction = Math.atan2(collisionY * collisionRatio2, collisionX * collisionRatio2) + Math.PI;
+      this.applyCollision(
+        Math.atan2(collisionY * collisionRatio1, collisionX * collisionRatio1),
+        Math.sqrt( Math.pow(collisionX * collisionRatio1, 2) + Math.pow(collisionY * collisionRatio1, 2)) * collisionBounce
+      );
 
-      this.speed = Math.sqrt( Math.pow(collisionX * collisionRatio1, 2) + Math.pow(collisionY * collisionRatio1, 2)) * this.bounce * object.bounce;
-      object.speed = Math.sqrt( Math.pow(collisionX * collisionRatio2, 2) + Math.pow(collisionY * collisionRatio2, 2)) * this.bounce * object.bounce;
+      object.applyCollision(
+        Math.atan2(collisionY * collisionRatio2, collisionX * collisionRatio2) + Math.PI,
+        Math.sqrt( Math.pow(collisionX * collisionRatio2, 2) + Math.pow(collisionY * collisionRatio2, 2)) * collisionBounce
+      );
 
     }
+
+  },
+
+  applyCollision: function(direction, speed) {
+
+    this.hitPoints--;
+
+    if (this.collisionBehaviors.includes('move')) {
+
+      this.direction = direction;
+      this.speed = speed;
+
+    }
+
+    if (this.collisionBehaviors.includes('divide')) {
+
+      stage.circles.push(new Circle({
+        x: this.x,
+        y: this.y,
+        radius: this.radius / 2,
+        direction: direction + Math.PI / 2,
+        speed: speed / 2
+      }));
+
+      stage.circles.push(new Circle({
+        x: this.x,
+        y: this.y,
+        radius: this.radius / 2,
+        direction: direction - Math.PI / 2,
+        speed: speed / 2
+      }));
+
+    }
+
+    if (this.collisionBehaviors.includes('pop')) {
+
+      this.hitPoints = 0;
+
+    }
+
+    this.direction = direction;
+    this.speed = speed;
 
   },
 
@@ -208,8 +260,8 @@ Circle.prototype = {
     // Position.
     stage.stage.translate(this.x, this.y);
 
-    stage.stage.fillStyle = "rgba(255, 255, 255, 1)";
-    stage.stage.strokeStyle = "rgba(0, 0, 0, .25)";
+    stage.stage.fillStyle = 'rgba(255, 255, 255, 1)';
+    stage.stage.strokeStyle = 'rgba(0, 0, 0, .025)';
 
     // Draw.
     stage.stage.beginPath();
@@ -218,11 +270,11 @@ Circle.prototype = {
     stage.stage.stroke();
     stage.stage.closePath();
 
-    stage.stage.fillStyle = "rgba(0, 0, 0, .25)";
+    stage.stage.fillStyle = 'rgba(0, 0, 0, ' + (this.density * this.radius) / 120 + ')';
 
     // Draw.
     stage.stage.beginPath();
-    stage.stage.arc(0, 0, this.radius * this.density / 3, 0, 2 * Math.PI);
+    stage.stage.arc(0, 0, this.radius - 5, 0, 2 * Math.PI);
     stage.stage.fill();
     stage.stage.closePath();
 

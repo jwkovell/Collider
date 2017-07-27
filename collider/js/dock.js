@@ -5,7 +5,7 @@ function Dock(options = {}) {
   this.x = options['x'] || 250;
   this.y = options['y'] || 650;
   this.radius = options['radius'] || 35;
-  this.maxSpawnRadius = 35;
+  this.maxSpawnRadius = 40;
   this.minSpawnRadius = 10;
   this.spawnRadius = 0;
   this.maxSpawnDensity = 3;
@@ -121,8 +121,8 @@ Dock.prototype = {
     stage.stage.fill();
     stage.stage.closePath();
 
-    stage.stage.fillStyle = "rgba(255, 255, 255, 1)";
-    stage.stage.strokeStyle = "rgba(0, 0, 0, .25)";
+    stage.stage.fillStyle = 'rgba(255, 255, 255, 1)';
+    stage.stage.strokeStyle = 'rgba(0, 0, 0, .25)';
 
     stage.stage.beginPath();
     stage.stage.arc(0, 0, this.spawnRadius, 0, 2 * Math.PI);
@@ -130,10 +130,10 @@ Dock.prototype = {
     stage.stage.stroke();
     stage.stage.closePath();
 
-    stage.stage.fillStyle = "rgba(0, 0, 0, .25)";
+    stage.stage.fillStyle = 'rgba(0, 0, 0, ' + (this.spawnDensity * this.spawnRadius) / (this.maxSpawnDensity * this.maxSpawnRadius) + ')';
 
     stage.stage.beginPath();
-    stage.stage.arc(0, 0, this.spawnRadius * this.spawnDensity / 3, 0, 2 * Math.PI);
+    stage.stage.arc(0, 0, this.spawnRadius - 5, 0, 2 * Math.PI);
     stage.stage.fill();
     stage.stage.closePath();
 

@@ -33,6 +33,7 @@ Stage.prototype = {
       y: 40,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
     }));
 
     this.circles.push(new Circle({
@@ -40,6 +41,7 @@ Stage.prototype = {
       y: 40,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
     }));
 
     this.circles.push(new Circle({
@@ -47,6 +49,7 @@ Stage.prototype = {
       y: 40,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
     }));
 
     this.circles.push(new Circle({
@@ -54,6 +57,7 @@ Stage.prototype = {
       y: 70,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
     }));
 
     this.circles.push(new Circle({
@@ -61,6 +65,7 @@ Stage.prototype = {
       y: 70,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
     }));
 
     this.circles.push(new Circle({
@@ -68,56 +73,56 @@ Stage.prototype = {
       y: 100,
       radius: 15,
       density: .5,
+      collisionBehaviors: ['divide', 'pop']
+    }));
+
+    this.pins.push(new Pin({
+      x: 250,
+      y: 300,
+      radius: 45,
+      bounce: 5
     }));
 
     this.pins.push(new Pin({
       x: 50,
       y: 500,
-      radius: 10
+      radius: 10,
+      hitPoints: 5
     }));
 
     this.pins.push(new Pin({
       x: 100,
       y: 500,
-      radius: 10
+      radius: 10,
+      hitPoints: 5
     }));
 
     this.pins.push(new Pin({
       x: 150,
       y: 500,
-      radius: 10
-    }));
-
-    this.pins.push(new Pin({
-      x: 200,
-      y: 500,
-      radius: 15,
-      bounce: 2
-    }));
-
-    this.pins.push(new Pin({
-      x: 300,
-      y: 500,
-      radius: 15,
-      bounce: 2
+      radius: 10,
+      hitPoints: 5
     }));
 
     this.pins.push(new Pin({
       x: 350,
       y: 500,
-      radius: 10
+      radius: 10,
+      hitPoints: 5
     }));
 
     this.pins.push(new Pin({
       x: 400,
       y: 500,
-      radius: 10
+      radius: 10,
+      hitPoints: 5
     }));
 
     this.pins.push(new Pin({
       x: 450,
       y: 500,
-      radius: 10
+      radius: 10,
+      hitPoints: 5
     }));
 
     // Instantiate Loop.
@@ -158,6 +163,36 @@ Stage.prototype = {
       circle.checkCollisions();
 
     });
+
+    // Loop through circles.
+    for (var circleID = this.circles.length - 1; circleID >= 0; circleID--) {
+
+      var circle = this.circles[circleID];
+
+      // If circle has no hit points...
+      if (circle.hitPoints <= 0) {
+
+        // Remove the circle.
+        this.circles.splice(circleID, 1);
+
+      }
+
+    };
+
+    // Loop through pins.
+    for (var pinID = this.pins.length - 1; pinID >= 0; pinID--) {
+
+      var pin = this.pins[pinID];
+
+      // If pin has no hit points...
+      if (pin.hitPoints <= 0) {
+
+        // Remove the pin.
+        this.pins.splice(pinID, 1);
+
+      }
+
+    };
 
   },
 
